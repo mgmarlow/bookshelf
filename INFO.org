@@ -1,0 +1,30 @@
+* Crate features
+
+See [[https://doc.rust-lang.org/cargo/reference/features.html][Features]].
+
+#+begin_src sh
+  cargo add tokio --features full
+#+end_src
+
+* Axum
+
+"Ergonomic and modular web framework built with Tokio, Tower, and Hyper."
+
+** Tokio
+
+#+begin_src rust
+  #[tokio::main]
+  async fn main() {
+    // ...
+  }
+#+end_src
+
+** Tower
+
+Axum does not have its own middleware framework, but instead uses ~tower::Service~. This allows you to share middleware with other applications written using hyper/tonic (which is a big plus for our gRPC apps).
+
+The ~Service~ trait mentioned above is the interface that allows us to write module/reusable network components that are decoupled from the underlying protocol. For example, this application will make use of tower-http for ~tower_http::services::fs:ServeDir~, a service that simply serves files from a directory in accordance to the HTTP spec.
+
+In a way, you can think of Tower as kind of a non-HTTP-specific Rack. Rack similarly opens up the Ruby ecosystem with web server-agnostic middleware, allowing you to plug and play middleware. Tower is another layer of abstraction separated, enabling the use of protocols other than HTTP.
+
+** Hyper
