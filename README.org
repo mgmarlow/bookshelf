@@ -1,3 +1,10 @@
 * Bookshelf
 
 Rust + Axum test app.
+
+** Installation
+
+#+begin_src sh
+  cargo install cargo-watch sqlx-cli
+#+end_src
+
