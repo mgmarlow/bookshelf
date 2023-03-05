@@ -165,6 +165,7 @@ dependencies = [
  "askama",
  "axum",
  "fake",
+ "serde",
  "sqlx",
  "tokio",
  "tracing",

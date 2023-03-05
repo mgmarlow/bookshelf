@@ -20,15 +20,10 @@ async fn main() -> Result<(), sqlx::Error> {
     let n = 50;
     let books: Vec<(String, String)> = (0..n).map(|_| fake_book()).collect();
     for book in books {
-        let author_id = sqlx::query!("INSERT INTO authors(name) values ($1)", book.1)
-            .execute(&mut conn)
-            .await?
-            .last_insert_rowid();
-
         sqlx::query!(
-            "INSERT INTO books(title, author_id) values ($1, $2)",
+            "INSERT INTO books(title, author) values ($1, $2)",
             book.0,
-            author_id
+            book.1,
         )
         .execute(&mut conn)
         .await?;

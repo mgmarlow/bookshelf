@@ -6,10 +6,13 @@ use axum::{
     response::IntoResponse,
     response::{Html, Response},
     routing::get,
-    Router,
+    Extension, Router,
 };
 
+use sqlx::SqlitePool;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+
+mod books;
 
 #[tokio::main]
 async fn main() {
@@ -21,7 +24,15 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let app = Router::new().route("/", get(index));
+    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let db = SqlitePool::connect(&database_url)
+        .await
+        .expect("failed to connect to DATABASE_URL");
+
+    let app = Router::new()
+        .route("/", get(index))
+        .merge(books::router())
+        .layer(Extension(db));
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     tracing::debug!("listening on {}", addr);

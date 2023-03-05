@@ -4,7 +4,7 @@ install:
 	cargo install cargo-watch sqlx-cli
 
 watch:
-	cargo watch -x run
+	DATABASE_URL=$(DATABASE_URL) cargo watch -x run
 
 db-create:
 	sqlx db create --database-url=$(DATABASE_URL)
