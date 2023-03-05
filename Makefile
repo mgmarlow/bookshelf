@@ -1,5 +1,8 @@
 DATABASE_URL = "sqlite:bookshelf.db"
 
+install:
+	cargo install cargo-watch sqlx-cli
+
 watch:
 	cargo watch -x run
 
@@ -12,4 +15,8 @@ db-drop:
 db-migrate:
 	sqlx migrate run --database-url=$(DATABASE_URL)
 
-db-reset: db-drop db-create db-migrate
+db-reset:
+	sqlx db reset --database-url=$(DATABASE_URL)
+
+db-seed:
+	DATABASE_URL=$(DATABASE_URL) cargo run --bin seed

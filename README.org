@@ -5,6 +5,8 @@ Rust + Axum test app.
 ** Installation
 
 #+begin_src sh
-  cargo install cargo-watch sqlx-cli
+  make install
+  make db-reset
+  make db-seed
 #+end_src
 

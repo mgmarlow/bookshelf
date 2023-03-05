@@ -28,3 +28,7 @@ The ~Service~ trait mentioned above is the interface that allows us to write mod
 In a way, you can think of Tower as kind of a non-HTTP-specific Rack. Rack similarly opens up the Ruby ecosystem with web server-agnostic middleware, allowing you to plug and play middleware. Tower is another layer of abstraction separated, enabling the use of protocols other than HTTP.
 
 ** Hyper
+
+* SQLx
+
+* Serde
