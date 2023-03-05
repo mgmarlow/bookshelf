@@ -10,6 +10,7 @@ use axum::{
 };
 
 use sqlx::SqlitePool;
+use tower_http::services::ServeDir;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod books;
@@ -31,6 +32,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(index))
+        .nest_service("/public", ServeDir::new("public"))
         .merge(books::router())
         .layer(Extension(db));
 

@@ -3,3 +3,4 @@
 /target
 bookshelf.db*
 .env
+.DS_Store
