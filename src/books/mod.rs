@@ -1,5 +1,5 @@
 use askama::Template;
-use axum::{response::IntoResponse, routing::get, Extension, Router};
+use axum::{extract::Path, response::IntoResponse, routing::get, Extension, Router};
 use serde::Serialize;
 use sqlx::SqlitePool;
 
@@ -14,7 +14,9 @@ pub struct Book {
 }
 
 pub fn router() -> Router {
-    Router::new().route("/books", get(books_index))
+    Router::new()
+        .route("/books", get(books_index))
+        .route("/books/:id", get(books_show))
 }
 
 #[derive(Template)]
@@ -28,12 +30,43 @@ async fn books_index(db: Extension<SqlitePool>) -> impl IntoResponse {
         Ok(books) => books,
         Err(_err) => {
             tracing::error!("Error showing books");
-            vec![]
+            panic!("error handling todo")
         }
     };
 
     let template = IndexTemplate { books };
     HtmlTemplate(template)
+}
+
+#[derive(Template)]
+#[template(path = "books/show.html")]
+struct ShowTemplate {
+    book: Book,
+}
+
+async fn books_show(db: Extension<SqlitePool>, Path(id): Path<i64>) -> impl IntoResponse {
+    let book = match get_book(&*db, id).await {
+        Ok(book) => book,
+        Err(_err) => {
+            tracing::error!("Error fetching book");
+            panic!("error handling todo")
+        }
+    };
+
+    let template = ShowTemplate { book };
+    HtmlTemplate(template)
+}
+
+pub async fn get_book(db: &SqlitePool, id: i64) -> Result<Book, sqlx::Error> {
+    let book = sqlx::query_as!(
+        Book,
+        "SELECT id, title, author, completed_at FROM books where books.id = $1",
+        id
+    )
+    .fetch_one(db)
+    .await?;
+
+    Ok(book)
 }
 
 pub async fn get_books(db: &SqlitePool) -> Result<Vec<Book>, sqlx::Error> {
