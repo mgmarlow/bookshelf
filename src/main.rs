@@ -34,7 +34,8 @@ async fn main() {
         .route("/", get(index))
         .nest_service("/public", ServeDir::new("public"))
         .merge(books::router())
-        .layer(Extension(db));
+        .layer(Extension(db))
+        .fallback(handler_404);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     tracing::debug!("listening on {}", addr);
@@ -69,4 +70,8 @@ where
 async fn index() -> impl IntoResponse {
     let template = IndexTemplate {};
     HtmlTemplate(template)
+}
+
+async fn handler_404() -> impl IntoResponse {
+    (StatusCode::NOT_FOUND, "Resource not found.")
 }

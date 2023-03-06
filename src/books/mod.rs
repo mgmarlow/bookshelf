@@ -1,5 +1,7 @@
 use askama::Template;
-use axum::{extract::Path, response::IntoResponse, routing::get, Extension, Router};
+use axum::{
+    extract::Path, http::StatusCode, response::IntoResponse, routing::get, Extension, Router,
+};
 use serde::Serialize;
 use sqlx::SqlitePool;
 
@@ -26,16 +28,20 @@ struct IndexTemplate {
 }
 
 async fn books_index(db: Extension<SqlitePool>) -> impl IntoResponse {
-    let books = match get_books(&*db).await {
-        Ok(books) => books,
+    match get_books(&*db).await {
+        Ok(books) => {
+            let template = IndexTemplate { books };
+            HtmlTemplate(template).into_response()
+        }
         Err(_err) => {
             tracing::error!("Error showing books");
-            panic!("error handling todo")
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Oops! Something went wrong.",
+            )
+                .into_response()
         }
-    };
-
-    let template = IndexTemplate { books };
-    HtmlTemplate(template)
+    }
 }
 
 #[derive(Template)]
@@ -45,16 +51,16 @@ struct ShowTemplate {
 }
 
 async fn books_show(db: Extension<SqlitePool>, Path(id): Path<i64>) -> impl IntoResponse {
-    let book = match get_book(&*db, id).await {
-        Ok(book) => book,
+    match get_book(&*db, id).await {
+        Ok(book) => {
+            let template = ShowTemplate { book };
+            HtmlTemplate(template).into_response()
+        }
         Err(_err) => {
             tracing::error!("Error fetching book");
-            panic!("error handling todo")
+            (StatusCode::NOT_FOUND, "Book not found").into_response()
         }
-    };
-
-    let template = ShowTemplate { book };
-    HtmlTemplate(template)
+    }
 }
 
 pub async fn get_book(db: &SqlitePool, id: i64) -> Result<Book, sqlx::Error> {
