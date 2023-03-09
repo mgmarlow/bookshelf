@@ -1,6 +1,8 @@
-* Crate features
+* Toolchain
 
-See [[https://doc.rust-lang.org/cargo/reference/features.html][Features]].
+** Cargo features
+
+Some crates allow you to pick and choose what functionality you want in your end application with [[https://doc.rust-lang.org/cargo/reference/features.html][Features]]. Generally you want to only select features you'll actually use to optimize your application's compile time and final footprint.
 
 #+begin_src sh
   cargo add tokio --features full
@@ -10,14 +12,36 @@ See [[https://doc.rust-lang.org/cargo/reference/features.html][Features]].
 
 "Ergonomic and modular web framework built with Tokio, Tower, and Hyper."
 
+Axum provides a nice framework for routing requests to handlers, parsing requests, handling errors, and other necessary items for your regular ol' HTTP server. It builds on top of the aforementioned libraries such that it is compatible with middleware written for non-HTTP frameworks like [[https://docs.rs/tonic/latest/tonic/][tonic]].
+
 ** Tokio
+
+Rust only ships with the bare essentials necessary for writing async code. Rust developers turn to async runtimes to fill in the gaps. Tokio is one such runtime.
+
+Tokio is built for IO-bound concurrency (think: reading files, making database calls, and the like), making it a great fit for HTTP/gRPC services. They recommend [[https://docs.rs/rayon/latest/rayon/][rayon]] as an alternative if you're dealing with CPU-bound workflows.
+
+Rust relies on an async runtime to execute async code. You start Tokio's async runtime by tagging your main function with the ~#[tokio::main]~ macro. This macro initializes the runtime instance and executes the async main function.
 
 #+begin_src rust
   #[tokio::main]
   async fn main() {
-    // ...
+    println!("hello");
   }
 #+end_src
+
+Specifically, the macro transforms the above into:
+
+#+begin_src rust
+  fn main() {
+    let mut rt = tokio::runtime::Runtime::new().unwrap();
+    rt.block_on(async {
+      println!("hello");
+    })
+  }
+#+end_src
+
+~async fn~ definitions are transformed into asynchronous routines at compile time. Calling an ~async fn~ returns a value that represents the operation called a [[https://doc.rust-lang.org/std/future/trait.Future.html][Future]] that must be awaited via ~#await~.
+
 
 ** Tower
 
@@ -29,6 +53,14 @@ In a way, you can think of Tower as kind of a non-HTTP-specific Rack. Rack simil
 
 ** Hyper
 
+Hyper is a low-level HTTP library that provides HTTP/1 & HTTP/2 client/server APIs.
+
 * SQLx
 
+Compile-time checked queries with a nice CLI for generating/running migrations.
+
 * Serde
+
+A framework for serializing/deserializing Rust data structures. You can think of it as a close equivalent to Golang's [[https://pkg.go.dev/encoding/json#Marshal][Marshal/Unmarshal]] features, with the exception that rendered formats are separate packages (e.g. ~serde_json~). A struct interacts with serde by deriving the ~Serializable~ or ~Deserializable~ macros.
+
+Note that the ~derive~ macro simply implements traits with a default implementation, in this case a default implementation for serializing or deserializing structs.
