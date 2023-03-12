@@ -11,3 +11,10 @@ Requires SQlite3.
   make db-reset
 #+end_src
 
+** Run the app
+
+Run the app in watch mode:
+
+#+begin_src sh
+  make watch
+#+end_src
