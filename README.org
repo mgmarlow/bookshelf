@@ -1,12 +1,13 @@
 * Bookshelf
 
-Rust + Axum test app.
+A simple app demonstrating Axum, sqlx, & htmx.
 
 ** Installation
+
+Requires SQlite3.
 
 #+begin_src sh
   make install
   make db-reset
-  make db-seed
 #+end_src
 
