@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Add a new book</h1>
+
+<div style="color: #e63946;" id="errors"></div>
+
+<form hx-post="/books" hx-target="#errors">
+  <div>
+    <label for="title">Title</label>
+    <input name="title" required />
+  </div>
+  <div>
+    <label for="author">Author</label>
+    <input name="author" required />
+  </div>
+  <button type="submit">Add</button>
+</form>
+{% endblock %}
+
+

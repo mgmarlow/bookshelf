@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS books (
        id INTEGER PRIMARY KEY,
-       title TEXT NOT NULL,
+       title TEXT NOT NULL UNIQUE,
        author TEXT NOT NULL,
        completed_at TEXT
 );
