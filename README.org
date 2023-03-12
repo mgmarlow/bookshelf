@@ -11,6 +11,12 @@ Requires SQlite3.
   make db-reset
 #+end_src
 
+Append the db name to .env:
+
+#+begin_src sh
+  echo "DATABASE_URL=sqlite:bookshelf.db" > .env
+#+end_src
+
 ** Run the app
 
 Run the app in watch mode:
