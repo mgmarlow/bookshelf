@@ -1,0 +1,4 @@
+- [ ] Encapsulate db in a books repository
+- [ ] Use [[https://docs.rs/axum/latest/axum/extract/struct.State.html][State]] instead of Extensions
+- [ ] User model and user sessions
+- [ ] Collections
